@@ -1,6 +1,7 @@
 import { JobListResponse, StatsResponse } from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+// Calls go to /api/* which Next.js rewrites to the backend (see next.config.ts)
+const API_BASE = "";
 
 export interface JobFilters {
   q?: string;
