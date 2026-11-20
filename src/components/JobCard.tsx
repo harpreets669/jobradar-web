@@ -22,12 +22,15 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
+  // Ensure UTC is assumed if no timezone suffix present
+  const normalized = /[Z+\-]\d*$/.test(dateStr) ? dateStr : dateStr + "Z";
+  const diff = Date.now() - new Date(normalized).getTime();
+  if (diff < 0) return "just now";
   const hours = Math.floor(diff / 3600000);
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days}d ago`;
-  return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+  return new Date(normalized).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
 
 export function JobCard({ job }: { job: Job }) {
@@ -86,7 +89,7 @@ export function JobCard({ job }: { job: Job }) {
         </span>
         <span className="ml-auto flex items-center gap-1 text-xs text-gray-400">
           <Clock className="w-3 h-3" />
-          {timeAgo(job.fetched_at)}
+          {timeAgo(job.posted_at ?? job.fetched_at)}
         </span>
       </div>
     </div>
